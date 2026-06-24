@@ -1,0 +1,25 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-black: #0b0b0d;
+  --color-graphite: #171717;
+  --color-ink: #252525;
+  --color-white: #ffffff;
+  --color-soft-white: #f7f4ef;
+  --color-border: #e7dfd6;
+  --color-muted: #716b64;
+  --color-orange: #f97316;
+  --color-orange-dark: #c2410c;
+  --color-orange-soft: #fff1e7;
+  --shadow-soft: 0 16px 38px rgba(11, 11, 13, 0.12);
+}
+
+body {
+  color: var(--color-ink);
+  background: var(--color-soft-white);
+  font-family: Arial, Helvetica, sans-serif;
+}

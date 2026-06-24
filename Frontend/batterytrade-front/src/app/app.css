@@ -1,0 +1,20 @@
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  background: var(--color-soft-white);
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.auth-layout {
+  display: block;
+}
+
+@media (max-width: 820px) {
+  .app-layout {
+    display: block;
+  }
+}

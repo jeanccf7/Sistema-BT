@@ -1,0 +1,144 @@
+<main class="dashboard-page">
+  <section class="hero-section">
+    <div>
+      <span class="eyebrow"> Panel principal </span>
+
+      <h1>Hola, {{ nombre }}</h1>
+
+      <p>Bienvenido al sistema Battery Trade</p>
+    </div>
+
+    <div class="date-card">
+      <span>Hoy</span>
+
+      <strong>
+        {{ fechaActual | date: 'dd/MM/yyyy' }}
+      </strong>
+
+      <small>
+        {{ rol }}
+      </small>
+    </div>
+  </section>
+
+  <section class="metrics-grid">
+    <article
+      class="metric-card"
+      *ngFor="let metrica of metricas"
+      [class.metric-positive]="metrica.estado === 'positivo'"
+      [class.metric-warning]="metrica.estado === 'alerta'"
+    >
+      <span>{{ metrica.titulo }}</span>
+
+      <strong>{{ metrica.valor }}</strong>
+
+      <small>{{ metrica.detalle }}</small>
+    </article>
+  </section>
+
+  <section class="content-grid">
+    <div class="main-column">
+      <section class="section-block">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow"> Acciones </span>
+
+            <h2>Accesos rápidos</h2>
+          </div>
+        </div>
+
+        <div class="quick-grid">
+          <article class="quick-card" *ngFor="let acceso of accesosRapidos">
+            <h3>
+              {{ acceso.titulo }}
+            </h3>
+
+            <p>
+              {{ acceso.descripcion }}
+            </p>
+
+            <a [routerLink]="acceso.ruta">
+              {{ acceso.accion }}
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow"> Inventario </span>
+
+            <h2>Stock crítico</h2>
+          </div>
+        </div>
+
+        <div class="stock-list">
+          <article class="stock-item" *ngFor="let item of stockCritico">
+            <div>
+              <strong>
+                {{ item.nombre }}
+              </strong>
+
+              <span>
+                {{ item.marca }}
+              </span>
+            </div>
+
+            <div>
+              <strong>
+                {{ item.stock }}
+              </strong>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <aside class="side-column">
+      <section class="section-block">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow"> Ventas </span>
+
+            <h2>Recientes</h2>
+          </div>
+        </div>
+
+        <div class="sales-list scrollable">
+          <article class="sale-item" *ngFor="let venta of ventasRecientes">
+            <div>
+              <strong> Venta #{{ venta.id }} </strong>
+
+              <span>
+                {{ venta.fecha }}
+              </span>
+            </div>
+
+            <div>
+              <strong> S/ {{ venta.total }} </strong>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block task-block">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow"> Checklist </span>
+
+            <h2>Tareas</h2>
+          </div>
+        </div>
+
+        <label class="task-item" *ngFor="let tarea of tareas">
+          <input type="checkbox" [(ngModel)]="tarea.completada" (change)="guardarTareas()" />
+
+          <span>
+            {{ tarea.texto }}
+          </span>
+        </label>
+      </section>
+    </aside>
+  </section>
+</main>

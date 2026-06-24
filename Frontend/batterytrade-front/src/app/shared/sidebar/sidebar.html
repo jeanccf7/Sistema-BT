@@ -1,0 +1,37 @@
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">BT</div>
+    <div>
+      <h2>Battery Trade</h2>
+      <span>Gestion comercial</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav" aria-label="Menu principal">
+    <a
+      *ngFor="let item of menuItems"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-link"
+    >
+      <span class="nav-icon">{{ item.icon }}</span>
+      <span>{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar">AD</div>
+      <div>
+        <strong>Administrador</strong>
+        <span>admin@batterytrade.com</span>
+      </div>
+    </div>
+
+    <a routerLink="/" class="logout-link">
+      <span class="nav-icon">SA</span>
+      <span>Salir</span>
+    </a>
+  </div>
+</aside>

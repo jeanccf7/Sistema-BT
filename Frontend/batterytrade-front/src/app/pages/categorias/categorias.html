@@ -1,0 +1,75 @@
+<div class="categorias-container">
+  <div class="header">
+    <div>
+      <h1>Categorías</h1>
+      <p>
+        {{ categoriasFiltradas.length }}
+        categorías registradas
+      </p>
+    </div>
+
+    <button class="btn-agregar" (click)="abrirFormulario()">+ Nueva Categoría</button>
+  </div>
+
+  <div class="buscador">
+    <input
+      type="text"
+      placeholder="Buscar categoría..."
+      [(ngModel)]="busqueda"
+      (input)="filtrar()"
+    />
+  </div>
+
+  <div class="tabla-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let categoria of categoriasFiltradas">
+          <td>
+            <strong>
+              {{ categoria.nombre }}
+            </strong>
+          </td>
+
+          <td>
+            {{ categoria.descripcion }}
+          </td>
+
+          <td>
+            <button class="btn-editar" (click)="editarCategoria(categoria)">Editar</button>
+
+            <button class="btn-eliminar" (click)="eliminarCategoria(categoria.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL -->
+
+<div class="modal-backdrop" *ngIf="mostrarFormulario">
+  <div class="modal">
+    <h2>
+      {{ editando ? 'Editar Categoría' : 'Nueva Categoría' }}
+    </h2>
+
+    <input type="text" placeholder="Nombre" [(ngModel)]="nuevaCategoria.nombre" />
+
+    <textarea rows="4" placeholder="Descripción" [(ngModel)]="nuevaCategoria.descripcion">
+    </textarea>
+
+    <div class="acciones">
+      <button class="btn-cancelar" (click)="cerrarFormulario()">Cancelar</button>
+
+      <button class="btn-guardar" (click)="guardarCategoria()">Guardar</button>
+    </div>
+  </div>
+</div>

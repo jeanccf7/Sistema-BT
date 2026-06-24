@@ -1,0 +1,59 @@
+<main class="login-page">
+  <section class="login-panel">
+    <div class="login-header">
+      <h1>Battery Trade</h1>
+      <p>Ingresa tus credenciales para continuar.</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()" novalidate>
+      <div class="form-group">
+        <label for="correo">Correo electronico</label>
+        <input
+          id="correo"
+          type="email"
+          formControlName="correo"
+          placeholder="admin@batterytrade.com"
+          autocomplete="email"
+          [class.input-error]="correo?.invalid && correo?.touched"
+        />
+
+        <small class="error" *ngIf="correo?.hasError('required') && correo?.touched">
+          El correo es obligatorio.
+        </small>
+        <small class="error" *ngIf="correo?.hasError('email') && correo?.touched">
+          Ingresa un correo valido.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contrasena</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Minimo 6 caracteres"
+          autocomplete="current-password"
+          [class.input-error]="password?.invalid && password?.touched"
+        />
+
+        <small class="error" *ngIf="password?.hasError('required') && password?.touched">
+          La contrasena es obligatoria.
+        </small>
+        <small class="error" *ngIf="password?.hasError('minlength') && password?.touched">
+          La contrasena debe tener al menos 6 caracteres.
+        </small>
+      </div>
+
+      <label class="remember-option">
+        <input type="checkbox" formControlName="recordar" />
+        Recordarme
+      </label>
+
+      <p class="error login-error" *ngIf="mensajeError">{{ mensajeError }}</p>
+
+      <button type="submit" [disabled]="loginForm.invalid || cargando">
+        {{ cargando ? 'Ingresando...' : 'Iniciar sesion' }}
+      </button>
+    </form>
+  </section>
+</main>

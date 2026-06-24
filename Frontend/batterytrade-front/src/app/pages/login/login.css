@@ -1,0 +1,168 @@
+* {
+  box-sizing: border-box;
+}
+
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(249, 115, 22, 0.28), transparent 34%),
+    linear-gradient(135deg, var(--color-black) 0%, #202020 52%, #0f0f10 100%);
+}
+
+.login-panel {
+  width: 100%;
+  max-width: 430px;
+  padding: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+}
+
+.login-header {
+  margin-bottom: 28px;
+}
+
+.login-header h1 {
+  margin: 0 0 8px;
+  color: var(--color-black);
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.login-header p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+form {
+  display: grid;
+  gap: 18px;
+}
+
+.form-group {
+  display: grid;
+  gap: 8px;
+}
+
+label {
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+input[type='email'],
+input[type='password'] {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-black);
+  background: var(--color-white);
+  font-size: 15px;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+input::placeholder {
+  color: #a09a93;
+}
+
+input[type='email']:focus,
+input[type='password']:focus {
+  border-color: var(--color-orange);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.16);
+}
+
+.input-error {
+  border-color: #dc2626 !important;
+  background: #fff7f7;
+}
+
+.input-error:focus {
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.13) !important;
+}
+
+.error {
+  color: #dc2626;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.login-error {
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background: #fef2f2;
+}
+
+.remember-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--color-muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.remember-option input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-orange);
+}
+
+button {
+  min-height: 50px;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-orange), var(--color-orange-dark));
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(249, 115, 22, 0.3);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(249, 115, 22, 0.38);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: 16px;
+  }
+
+  .login-panel {
+    padding: 26px 20px;
+  }
+
+  .login-header h1 {
+    font-size: 27px;
+  }
+}
