@@ -26,6 +26,13 @@ public class VentaDTO {
     @PositiveOrZero(message = "El total no puede ser negativo")
     private double total;
 
+    private String estadoPago;
+    private String estadoEntrega;
+    private String metodoPago;
+    private String observacion;
+
+    
+
     @NotEmpty(message = "Debe agregar al menos un producto")
     @Valid
     private List<DetalleVentaDTO> detalles;
@@ -88,7 +95,30 @@ public class VentaDTO {
     public void setTotal(double total) {
         this.total = total;
     }
-
+    public String getEstadoPago() {
+        return estadoPago;
+    }
+    public void setEstadoPago(String estadoPago) {
+        this.estadoPago = estadoPago;
+    }
+    public String getEstadoEntrega() {
+        return estadoEntrega;
+    }
+    public void setEstadoEntrega(String estadoEntrega) {
+        this.estadoEntrega = estadoEntrega;
+    }
+    public String getMetodoPago() {
+        return metodoPago;
+    }
+    public void setMetodoPago(String metodoPago) {
+        this.metodoPago = metodoPago;
+    }
+    public String getObservacion() {
+        return observacion;
+    }
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
+    }
     public List<DetalleVentaDTO> getDetalles() {
         return detalles;
     }

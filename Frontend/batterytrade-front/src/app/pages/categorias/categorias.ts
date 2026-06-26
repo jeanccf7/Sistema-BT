@@ -1,213 +1,91 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  OnInit,
-  inject
-} from '@angular/core';
-
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-import {
-  Categoria,
-  CategoriaService,
-  NuevaCategoria
-} from '../../services/categoria.service';
+import { BehaviorSubject, switchMap } from 'rxjs';
+import { Categoria, CategoriaService, NuevaCategoria } from '../../services/categoria.service';
 
 @Component({
   selector: 'app-categorias',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule
-  ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './categorias.html',
-  styleUrl: './categorias.css'
+  styleUrl: './categorias.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Categorias implements OnInit {
+export class Categorias {
+  private categoriaService = inject(CategoriaService);
+  private reload$ = new BehaviorSubject<void>(undefined);
 
-  private categoriaService =
-    inject(CategoriaService);
-
-  categorias: Categoria[] = [];
-  categoriasFiltradas: Categoria[] = [];
+  categorias$ = this.reload$.pipe(
+    switchMap(() => this.categoriaService.listar())
+  );
 
   busqueda = '';
-
   mostrarFormulario = false;
-
   editando = false;
-
+  guardando = false;           // 👈 bloquea el botón mientras la petición está en vuelo
   categoriaSeleccionadaId = 0;
+  nuevaCategoria: NuevaCategoria = { nombre: '', descripcion: '' };
 
-  nuevaCategoria: NuevaCategoria = {
-    nombre: '',
-    descripcion: ''
-  };
-
-  ngOnInit(): void {
-    this.cargarCategorias();
+  private recargar(): void {
+    this.reload$.next();
   }
 
-  cargarCategorias(): void {
-
-    this.categoriaService
-      .listar()
-      .subscribe({
-
-        next: (data) => {
-
-          this.categorias = data;
-          this.categoriasFiltradas = data;
-
-        },
-
-        error: (err) => {
-          console.error(err);
-        }
-
-      });
-
-  }
-
-  filtrar(): void {
-
-    const texto =
-      this.busqueda.toLowerCase();
-
-    this.categoriasFiltradas =
-      this.categorias.filter(c =>
-
-        c.nombre
-          .toLowerCase()
-          .includes(texto)
-
-        ||
-
-        c.descripcion
-          .toLowerCase()
-          .includes(texto)
-
-      );
-
+  filtrar(categorias: Categoria[]): Categoria[] {
+    const texto = this.busqueda.toLowerCase();
+    return categorias.filter(
+      (c) =>
+        c.nombre.toLowerCase().includes(texto) ||
+        c.descripcion.toLowerCase().includes(texto)
+    );
   }
 
   abrirFormulario(): void {
-
     this.editando = false;
-
-    this.nuevaCategoria = {
-      nombre: '',
-      descripcion: ''
-    };
-
+    this.nuevaCategoria = { nombre: '', descripcion: '' };
     this.mostrarFormulario = true;
   }
 
-  editarCategoria(
-    categoria: Categoria
-  ): void {
-
+  editarCategoria(categoria: Categoria): void {
     this.editando = true;
-
-    this.categoriaSeleccionadaId =
-      categoria.id;
-
-    this.nuevaCategoria = {
-      nombre: categoria.nombre,
-      descripcion: categoria.descripcion
-    };
-
+    this.categoriaSeleccionadaId = categoria.id;
+    this.nuevaCategoria = { nombre: categoria.nombre, descripcion: categoria.descripcion };
     this.mostrarFormulario = true;
   }
 
   cerrarFormulario(): void {
-
     this.mostrarFormulario = false;
-
-    this.nuevaCategoria = {
-      nombre: '',
-      descripcion: ''
-    };
-
+    this.guardando = false;
+    this.nuevaCategoria = { nombre: '', descripcion: '' };
   }
 
   guardarCategoria(): void {
+    if (!this.nuevaCategoria.nombre.trim() || this.guardando) return;  // 👈 corta si ya hay una petición activa
 
-    if (!this.nuevaCategoria.nombre.trim()) {
-      return;
-    }
+    this.guardando = true;
 
-    if (this.editando) {
+    const accion$ = this.editando
+      ? this.categoriaService.actualizar(this.categoriaSeleccionadaId, {
+          id: this.categoriaSeleccionadaId,
+          ...this.nuevaCategoria,
+        })
+      : this.categoriaService.guardar(this.nuevaCategoria);
 
-      const categoria: Categoria = {
-
-        id: this.categoriaSeleccionadaId,
-
-        nombre:
-          this.nuevaCategoria.nombre,
-
-        descripcion:
-          this.nuevaCategoria.descripcion
-
-      };
-
-      this.categoriaService
-        .actualizar(
-          categoria.id,
-          categoria
-        )
-        .subscribe({
-
-          next: () => {
-
-            this.cargarCategorias();
-            this.cerrarFormulario();
-
-          }
-
-        });
-
-    } else {
-
-      this.categoriaService
-        .guardar(this.nuevaCategoria)
-        .subscribe({
-
-          next: () => {
-
-            this.cargarCategorias();
-            this.cerrarFormulario();
-
-          }
-
-        });
-
-    }
-
+    accion$.subscribe({
+      next: () => {
+        this.recargar();
+        this.cerrarFormulario();  // ya resetea guardando a false
+      },
+      error: () => {
+        this.guardando = false;   // 👈 si falla, desbloquea el botón para que pueda reintentar
+      },
+    });
   }
 
-  eliminarCategoria(
-    id: number
-  ): void {
-
-    if (
-      !confirm(
-        '¿Deseas eliminar esta categoría?'
-      )
-    ) {
-      return;
-    }
-
-    this.categoriaService
-      .eliminar(id)
-      .subscribe({
-
-        next: () => {
-          this.cargarCategorias();
-        }
-
-      });
-
+  eliminarCategoria(id: number): void {
+    if (!confirm('¿Deseas eliminar esta categoría?')) return;
+    this.categoriaService.eliminar(id).subscribe({
+      next: () => this.recargar(),
+    });
   }
-
 }

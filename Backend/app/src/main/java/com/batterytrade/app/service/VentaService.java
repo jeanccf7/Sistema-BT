@@ -21,80 +21,37 @@ import java.util.List;
 @Service
 public class VentaService {
 
-    private final UsuarioRepository usuarioRepository;
-    private final VentaRepository ventaRepository;
-    private final ProductoRepository productoRepository;
-    private final ClienteRepository clienteRepository;
-    
+private final VentaRepository ventaRepository;
+private final ProductoRepository productoRepository;
+private final ClienteRepository clienteRepository;
+private final UsuarioRepository usuarioRepository;
 
-    public VentaService(
-            VentaRepository ventaRepository,
-            ProductoRepository productoRepository,
-            ClienteRepository clienteRepository,
-            UsuarioRepository usuarioRepository   ) {
+public VentaService(
+        VentaRepository ventaRepository,
+        ProductoRepository productoRepository,
+        ClienteRepository clienteRepository,
+        UsuarioRepository usuarioRepository) {
 
-        this.ventaRepository = ventaRepository;
-        this.productoRepository = productoRepository;
-        this.clienteRepository = clienteRepository;
-        this.usuarioRepository = usuarioRepository;
-    }
+    this.ventaRepository = ventaRepository;
+    this.productoRepository = productoRepository;
+    this.clienteRepository = clienteRepository;
+    this.usuarioRepository = usuarioRepository;
+}
 
-    public List<Venta> listar() {
-        return ventaRepository.findAll();
-    }
+public List<Venta> listar() {
+    return ventaRepository.findAll();
+}
 
-    public Venta buscar(Long id) {
-        return ventaRepository.findById(id)
-                .orElse(null);
-    }
+public Venta buscar(Long id) {
+    return ventaRepository.findById(id)
+            .orElse(null);
+}
 
-    public Venta registrarVenta(Venta venta) {
+public void eliminar(Long id) {
+    ventaRepository.deleteById(id);
+}
 
-        double total = 0;
-
-        venta.setFecha(LocalDate.now());
-
-        for (DetalleVenta detalle : venta.getDetalles()) {
-
-            Producto producto = productoRepository
-                    .findById(detalle.getProducto().getId())
-                    .orElseThrow(() ->
-                            new RuntimeException(
-                                    "Producto no encontrado"));
-
-            if (producto.getStock() < detalle.getCantidad()) {
-
-                throw new RuntimeException(
-                        "Stock insuficiente para "
-                                + producto.getNombre());
-            }
-
-            detalle.setPrecioUnitario(
-                    producto.getPrecio());
-
-            detalle.setSubtotal(
-                    detalle.getCantidad()
-                            * producto.getPrecio());
-
-            producto.setStock(
-                    producto.getStock()
-                            - detalle.getCantidad());
-
-            productoRepository.save(producto);
-
-            total += detalle.getSubtotal();
-        }
-
-        venta.setTotal(total);
-
-        return ventaRepository.save(venta);
-    }
-
-    public void eliminar(Long id) {
-        ventaRepository.deleteById(id);
-    }
-
-    public VentaDTO registrar(VentaDTO ventaDTO) {
+public VentaDTO registrar(VentaDTO ventaDTO) {
 
     Cliente cliente = clienteRepository
             .findById(ventaDTO.getClienteId())
@@ -109,20 +66,37 @@ public class VentaService {
     Venta venta = new Venta();
 
     venta.setFecha(LocalDate.now());
+
     venta.setCliente(cliente);
+
     venta.setVendedor(vendedor);
 
+    venta.setEstadoPago(
+            ventaDTO.getEstadoPago() == null
+                    ? "PENDIENTE"
+                    : ventaDTO.getEstadoPago());
+
+    venta.setEstadoEntrega(
+            ventaDTO.getEstadoEntrega() == null
+                    ? "PENDIENTE"
+                    : ventaDTO.getEstadoEntrega());
+
+    venta.setMetodoPago(
+            ventaDTO.getMetodoPago() == null
+                    ? "EFECTIVO"
+                    : ventaDTO.getMetodoPago());
+
+    
     List<DetalleVenta> detalles = new ArrayList<>();
 
     double total = 0;
-
+    
     for (DetalleVentaDTO detalleDTO : ventaDTO.getDetalles()) {
 
         Producto producto = productoRepository
                 .findById(detalleDTO.getProductoId())
                 .orElseThrow(() ->
-                        new RuntimeException(
-                                "Producto no encontrado"));
+                        new RuntimeException("Producto no encontrado"));
 
         if (producto.getStock() < detalleDTO.getCantidad()) {
 
@@ -159,6 +133,7 @@ public class VentaService {
     }
 
     venta.setDetalles(detalles);
+
     venta.setTotal(total);
 
     Venta ventaGuardada =
@@ -187,6 +162,17 @@ public class VentaService {
     respuesta.setTotal(
             ventaGuardada.getTotal());
 
+    respuesta.setEstadoPago(
+            ventaGuardada.getEstadoPago());
+
+    respuesta.setEstadoEntrega(
+            ventaGuardada.getEstadoEntrega());
+
+    respuesta.setMetodoPago(
+            ventaGuardada.getMetodoPago());
+
     return respuesta;
 }
+
+
 }

@@ -1,1 +1,86 @@
-<p>clientes works!</p>
+<ng-container *ngIf="clientes$ | async as clientes">
+    <ng-container *ngIf="filtrar(clientes) as lista">
+        <div class="clientes-container">
+            <div class="header">
+                <div>
+                    <h1>Clientes</h1>
+                    <p>
+                        {{ lista.length }}
+                        clientes registrados
+                    </p>
+                </div>
+                <button class="btn-agregar" (click)="abrirFormulario()">
+                    + Nuevo Cliente
+                </button>
+            </div>
+            <div class="buscador">
+                <input type="text" placeholder="Buscar por DNI, nombre o teléfono..." [(ngModel)]="busqueda">
+            </div>
+            <div class="tabla-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DNI</th>
+                            <th>Cliente</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Dirección</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let cliente of lista">
+                            <td>{{ cliente.dni }}</td>
+                            <td>
+                                <strong>
+                                    {{ cliente.nombre }}
+                                    {{ cliente.apellido }}
+                                </strong>
+                            </td>
+                            <td>{{ cliente.telefono }}</td>
+                            <td>{{ cliente.correo }}</td>
+                            <td>{{ cliente.direccion }}</td>
+                            <td>
+                                <button class="btn-editar" (click)="editarCliente(cliente)">
+                                    Editar
+                                </button>
+                                <button class="btn-eliminar" (click)="eliminarCliente(cliente.id)">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>
+<div class="modal-backdrop" *ngIf="mostrarFormulario">
+    <div class="modal">
+        <h2>
+            {{
+            editando
+            ? 'Editar Cliente'
+            : 'Nuevo Cliente'
+            }}
+        </h2>
+        <input type="text" placeholder="DNI" [(ngModel)]="nuevoCliente.dni">
+        <input type="text" placeholder="Nombre" [(ngModel)]="nuevoCliente.nombre">
+        <input type="text" placeholder="Apellido" [(ngModel)]="nuevoCliente.apellido">
+        <input type="text" placeholder="Teléfono" [(ngModel)]="nuevoCliente.telefono">
+        <input type="text" placeholder="Dirección" [(ngModel)]="nuevoCliente.direccion">
+        <input type="email" placeholder="Correo" [(ngModel)]="nuevoCliente.correo">
+        <div class="acciones">
+            <button class="btn-cancelar" (click)="cerrarFormulario()">
+                Cancelar
+            </button>
+            <button class="btn-guardar" [disabled]="guardando" (click)="guardarCliente()">
+                {{
+                guardando
+                ? 'Guardando...'
+                : 'Guardar'
+                }}
+            </button>
+        </div>
+    </div>
+</div>

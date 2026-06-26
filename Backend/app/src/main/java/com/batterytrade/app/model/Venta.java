@@ -24,6 +24,12 @@ public class Venta {
 
     private double total;
 
+    private String estadoPago; // COMPLETADO | PENDIENTE
+
+    private String estadoEntrega; // COMPLETADO | PENDIENTE
+
+    private String metodoPago;
+
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
     private List<DetalleVenta> detalles;
 
@@ -70,6 +76,28 @@ public class Venta {
         this.total = total;
     }
 
+    public String getEstadoPago(){
+        return estadoPago;
+    }
+
+    public void setEstadoPago(String estadoPago){
+        this.estadoPago= estadoPago;
+    }
+
+    public String getEstadoEntrega(){
+        return estadoEntrega;
+    }
+    public void setEstadoEntrega(String estadoEntrega){
+        this.estadoEntrega = estadoEntrega;
+    }
+
+    public String getMetodoPago(){
+        return metodoPago;
+    }
+    public void setMetodoPago(String metodoPago){
+        this.metodoPago = metodoPago;
+    }
+
     public List<DetalleVenta> getDetalles() {
         return detalles;
     }
@@ -77,5 +105,6 @@ public class Venta {
     public void setDetalles(List<DetalleVenta> detalles) {
         this.detalles = detalles;
     }
+
 
 }

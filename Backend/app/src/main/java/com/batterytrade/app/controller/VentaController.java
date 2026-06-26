@@ -28,13 +28,12 @@ public class VentaController {
     public Venta buscar(@PathVariable Long id) {
         return service.buscar(id);
     }
-    
-     @PostMapping
-      public Venta registrar(@RequestBody Venta venta) {
-      return service.registrarVenta(venta);
-      }
-    
 
+    @PostMapping
+    public VentaDTO registrar(
+            @RequestBody VentaDTO ventaDTO) {
+        return service.registrar(ventaDTO);
+    }
 
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {

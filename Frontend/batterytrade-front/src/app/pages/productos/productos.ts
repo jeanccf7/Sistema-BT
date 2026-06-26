@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, inject, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProductoService, Producto, NuevoProducto } from '../../services/producto.service';
 import { CategoriaService, Categoria } from '../../services/categoria.service';
@@ -9,9 +9,9 @@ import { CategoriaService, Categoria } from '../../services/categoria.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './productos.html',
-  styleUrl: './productos.css',
+  styleUrls: ['./productos.css'],
 })
-export class Productos implements OnInit {
+export class Productos implements OnInit, AfterViewInit {
   private productoService = inject(ProductoService);
 
   private categoriaService = inject(CategoriaService);
@@ -40,8 +40,13 @@ export class Productos implements OnInit {
   };
 
   ngOnInit(): void {
+    console.log('Productos cargado');
     this.cargarProductos();
     this.cargarCategorias();
+  }
+
+  ngAfterViewInit(): void {
+    this.cdr.detectChanges();
   }
 
   cargarCategorias(): void {
@@ -61,8 +66,8 @@ export class Productos implements OnInit {
       next: (data) => {
         this.productos = [...data];
         this.productosFiltrados = [...data];
-
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
+        console.log('Productos recibidos:', data.length);
       },
 
       error: (err) => {
@@ -78,7 +83,7 @@ export class Productos implements OnInit {
       (producto) =>
         producto.nombre.toLowerCase().includes(texto) ||
         producto.marca.toLowerCase().includes(texto) ||
-        producto.categoria?.nombre.toLowerCase().includes(texto),
+        producto.categoria?.nombre?.toLowerCase().includes(texto),
     );
   }
 

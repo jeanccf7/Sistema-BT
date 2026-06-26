@@ -12,6 +12,7 @@ public class Cliente {
     private Long id;
     
     @NotBlank(message = "El DNI es obligatorio")
+    @Column(unique = true)
     private String dni;
 
     @NotBlank(message = "El nombre es obligatorio")
@@ -24,6 +25,8 @@ public class Cliente {
     private String telefono;
 
     private String direccion;
+    
+    @Column(unique = true)
     private String correo;
 
     public Cliente() {

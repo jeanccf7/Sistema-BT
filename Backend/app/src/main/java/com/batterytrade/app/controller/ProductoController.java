@@ -32,12 +32,11 @@ public class ProductoController {
     }
 
     @PostMapping
-public Producto guardar(
-        @Valid
-        @RequestBody Producto producto) {
+    public Producto guardar(
+            @Valid @RequestBody Producto producto) {
 
-    return service.guardar(producto);
-}
+        return service.guardar(producto);
+    }
 
     @DeleteMapping("/{id}")
     public void eliminar(

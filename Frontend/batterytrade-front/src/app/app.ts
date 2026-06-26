@@ -1,20 +1,37 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Sidebar } from './shared/sidebar/sidebar';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [CommonModule, RouterOutlet, Sidebar],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('batterytrade-front');
 
-  constructor(private router: Router) {}
+  mostrarSidebar = false;
 
-  mostrarSidebar() {
-    return this.router.url !== '/';
+  constructor(private router: Router) {
+
+    this.mostrarSidebar =
+      this.router.url !== '/';
+
+    this.router.events
+      .pipe(
+        filter(event =>
+          event instanceof NavigationEnd
+        )
+      )
+      .subscribe(() => {
+
+        this.mostrarSidebar =
+          this.router.url !== '/';
+
+      });
+
   }
 }

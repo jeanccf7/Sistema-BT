@@ -1,175 +1,76 @@
 <div class="productos-container">
 
   <div class="header">
-
     <div>
       <h1>Productos</h1>
       <p>
-        {{ productosFiltrados.length }}
+      {{ productosFiltrados.length }}
         productos registrados
       </p>
     </div>
-
-    <button
-      class="btn-agregar"
-      (click)="abrirFormulario()">
-
+    <button class="btn-agregar" (click)="abrirFormulario()">
       + Nuevo Producto
-
     </button>
-
   </div>
 
   <div class="buscador">
-
-    <input
-      type="text"
-      placeholder="Buscar producto..."
-      [(ngModel)]="busqueda"
-      (input)="filtrar()"
-    />
-
+    <input type="text" placeholder="Buscar producto..." [(ngModel)]="busqueda" (input)="filtrar()" />
   </div>
-
   <div class="tabla-container">
-
     <table>
-
       <thead>
-
         <tr>
-
           <th>Producto</th>
           <th>Marca</th>
           <th>Categoría</th>
           <th>Precio</th>
           <th>Stock</th>
           <th>Acciones</th>
-
         </tr>
-
       </thead>
 
       <tbody>
-
-        <tr
-          *ngFor="
-            let producto
-            of productosFiltrados
-          ">
-
+        <tr *ngFor="let producto of productosFiltrados">
           <td>{{ producto.nombre }}</td>
-
           <td>{{ producto.marca }}</td>
-
           <td>
             {{ producto.categoria?.nombre }}
           </td>
-
           <td>
             S/ {{ producto.precio }}
           </td>
-
           <td>
             {{ producto.stock }}
           </td>
-
           <td>
-
-            <button
-              class="btn-eliminar"
-              (click)="eliminarProducto(producto.id)">
-
-              Eliminar
-
+            <button class="btn-eliminar" (click)="eliminarProducto(producto.id)">Eliminar
             </button>
-
           </td>
-
         </tr>
-
       </tbody>
-
     </table>
-
   </div>
-
 </div>
 
 <!-- MODAL -->
-
-<div
-  class="modal-backdrop"
-  *ngIf="mostrarFormulario">
-
+<div class="modal-backdrop" *ngIf="mostrarFormulario">
   <div class="modal">
-
     <h2>Nuevo Producto</h2>
-
-    <input
-      type="text"
-      placeholder="Nombre"
-      [(ngModel)]="nuevoProducto.nombre"
-    />
-
-    <input
-      type="text"
-      placeholder="Marca"
-      [(ngModel)]="nuevoProducto.marca"
-    />
-
-    <input
-      type="number"
-      placeholder="Precio"
-      [(ngModel)]="nuevoProducto.precio"
-    />
-
-    <input
-      type="number"
-      placeholder="Stock"
-      [(ngModel)]="nuevoProducto.stock"
-    />
-
-    <select
-      [(ngModel)]="nuevoProducto.categoria">
-
-      <option
-        [ngValue]="null">
-
+    <input type="text" placeholder="Nombre" [(ngModel)]="nuevoProducto.nombre" />
+    <input type="text" placeholder="Marca" [(ngModel)]="nuevoProducto.marca" />
+    <input type="number" placeholder="Precio" [(ngModel)]="nuevoProducto.precio" />
+    <input type="number" placeholder="Stock" [(ngModel)]="nuevoProducto.stock" />
+    <select [(ngModel)]="nuevoProducto.categoria">
+      <option [ngValue]="null">
         Seleccione categoría
-
       </option>
-
-      <option
-        *ngFor="let categoria of categorias"
-        [ngValue]="categoria">
-
+      <option *ngFor="let categoria of categorias" [ngValue]="categoria">
         {{ categoria.nombre }}
-
       </option>
-
     </select>
-
     <div class="acciones">
-
-      <button
-        class="btn-cancelar"
-        (click)="cerrarFormulario()">
-
-        Cancelar
-
-      </button>
-
-      <button
-        class="btn-guardar"
-        (click)="guardarProducto()">
-
-        Guardar
-
-      </button>
-
+      <button class="btn-cancelar" (click)="cerrarFormulario()">Cancelar</button>
+      <button class="btn-guardar" (click)="guardarProducto()">Guardar</button>
     </div>
-
   </div>
-
 </div>
