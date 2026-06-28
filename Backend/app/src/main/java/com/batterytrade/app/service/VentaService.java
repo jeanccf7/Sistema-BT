@@ -13,6 +13,7 @@ import com.batterytrade.app.repository.UsuarioRepository;
 import com.batterytrade.app.repository.VentaRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -51,17 +52,30 @@ public void eliminar(Long id) {
     ventaRepository.deleteById(id);
 }
 
+@Transactional
 public VentaDTO registrar(VentaDTO ventaDTO) {
+
+    if (ventaDTO.getClienteId() == null) {
+        throw new IllegalArgumentException("Debe seleccionar un cliente");
+    }
+
+    if (ventaDTO.getVendedorId() == null) {
+        throw new IllegalArgumentException("Debe seleccionar un vendedor");
+    }
+
+    if (ventaDTO.getDetalles() == null || ventaDTO.getDetalles().isEmpty()) {
+        throw new IllegalArgumentException("Debe agregar al menos un producto");
+    }
 
     Cliente cliente = clienteRepository
             .findById(ventaDTO.getClienteId())
             .orElseThrow(() ->
-                    new RuntimeException("Cliente no encontrado"));
+                    new IllegalArgumentException("Cliente no encontrado"));
 
     Usuario vendedor = usuarioRepository
             .findById(ventaDTO.getVendedorId())
             .orElseThrow(() ->
-                    new RuntimeException("Vendedor no encontrado"));
+                    new IllegalArgumentException("Vendedor no encontrado"));
 
     Venta venta = new Venta();
 
@@ -93,14 +107,22 @@ public VentaDTO registrar(VentaDTO ventaDTO) {
     
     for (DetalleVentaDTO detalleDTO : ventaDTO.getDetalles()) {
 
+        if (detalleDTO.getProductoId() == null) {
+            throw new IllegalArgumentException("Debe seleccionar un producto");
+        }
+
+        if (detalleDTO.getCantidad() <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
+        }
+
         Producto producto = productoRepository
                 .findById(detalleDTO.getProductoId())
                 .orElseThrow(() ->
-                        new RuntimeException("Producto no encontrado"));
+                        new IllegalArgumentException("Producto no encontrado"));
 
         if (producto.getStock() < detalleDTO.getCantidad()) {
 
-            throw new RuntimeException(
+            throw new IllegalArgumentException(
                     "Stock insuficiente para "
                             + producto.getNombre());
         }

@@ -19,9 +19,13 @@ export interface NuevaVenta {
   estadoPago: string;
   estadoEntrega: string;
   metodoPago: string;
-  detalles: any[];
+  observacion?: string;
+  detalles: DetalleVenta[];
 }
-
+export interface DetalleVenta {
+  productoId: number;
+  cantidad: number;
+}
 @Injectable({
   providedIn: 'root',
 })

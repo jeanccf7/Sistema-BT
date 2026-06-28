@@ -13,20 +13,13 @@ import { CategoriaService, Categoria } from '../../services/categoria.service';
 })
 export class Productos implements OnInit, AfterViewInit {
   private productoService = inject(ProductoService);
-
   private categoriaService = inject(CategoriaService);
-
   private cdr = inject(ChangeDetectorRef);
-
   productos: Producto[] = [];
   productosFiltrados: Producto[] = [];
-
   categorias: Categoria[] = [];
-
   busqueda = '';
-
   mostrarFormulario = false;
-
   nuevoProducto: NuevoProducto = {
     nombre: '',
     marca: '',
@@ -109,6 +102,13 @@ export class Productos implements OnInit, AfterViewInit {
   }
 
   guardarProducto(): void {
+    if (!this.nuevoProducto.categoria ||
+      this.nuevoProducto.categoria.id === 0) {
+
+    alert('Debe seleccionar una categoría');
+
+    return;
+  }
     this.productoService.guardar(this.nuevoProducto).subscribe({
       next: () => {
         this.cargarProductos();

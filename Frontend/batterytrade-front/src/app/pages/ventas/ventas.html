@@ -1,132 +1,162 @@
 <ng-container *ngIf="ventas$ | async as ventas">
+  <ng-container *ngIf="filtrar(ventas) as lista">
+    <div class="ventas-container">
 
-    <ng-container *ngIf="filtrar(ventas) as lista">
-
-        <div class="ventas-container">
-
-            <div class="header">
-
-                <div>
-                    <h1>Ventas</h1>
-                    <p>{{ lista.length }} ventas registradas</p>
-                </div>
-
-                <button class="btn-agregar" (click)="abrirFormulario()">
-                    + Nueva Venta
-                </button>
-            </div>
-            <div class="buscador">
-                <input type="text" placeholder="Buscar cliente, pago o entrega..." [(ngModel)]="busqueda">
-            </div>
-            <div class="tabla-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Cliente</th>
-                            <th>Total</th>
-                            <th>Pago</th>
-                            <th>Entrega</th>
-                            <th>Método</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let venta of lista">
-
-                            <td>{{ venta.fecha }}</td>
-                            <td>
-                                <strong>
-                                    {{ venta.nombreCliente }}
-                                </strong>
-                            </td>
-                            <td>
-                                S/ {{ venta.total }}
-                            </td>
-                            <td>
-                                <span class="badge" [ngClass]="
-                venta.estadoPago === 'PAGADO'
-                ? 'badge-success'
-                : 'badge-warning'
-              ">
-                                    {{ venta.estadoPago }}
-
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge" [ngClass]="
-                venta.estadoEntrega === 'ENTREGADO'
-                ? 'badge-success'
-                : 'badge-danger'
-              ">
-                                    {{ venta.estadoEntrega }}
-                                </span>
-                            </td>
-                            <td>
-                                {{ venta.metodoPago }}
-                            </td>
-                            <td>
-                                
-                                <button class="btn-eliminar" (click)="eliminarVenta(venta.id)">
-                                    Eliminar
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+      <div class="header">
+        <div>
+          <h1>Ventas</h1>
+          <p>{{ lista.length }} ventas registradas</p>
         </div>
-    </ng-container>
+        <button class="btn-agregar" (click)="abrirFormulario()">+ Nueva Venta</button>
+      </div>
 
-</ng-container>
-<div class="modal-backdrop" *ngIf="mostrarFormulario">
-    <div class="modal">
-        <h2>Nueva Venta</h2>
-        <select [(ngModel)]="nuevaVenta.clienteId">
-            <option [value]="0">
-                Seleccione cliente
-            </option>
-            <option *ngFor="let cliente of clientes" [value]="cliente.id">
-                {{ cliente.nombre }}
-            </option>
-        </select>
-        <select [(ngModel)]="nuevaVenta.metodoPago">
-            <option value="EFECTIVO">
-                Efectivo
-            </option>
-            <option value="YAPE">
-                Yape
-            </option>
-            <option value="PLIN">
-                Plin
-            </option>
-            <option value="TRANSFERENCIA">
-                Transferencia
-            </option>
-        </select>
-        <select [(ngModel)]="nuevaVenta.estadoPago">
-            <option value="PENDIENTE">
-                Pendiente
-            </option>
-            <option value="PAGADO">
-                Pagado
-            </option>
-        </select>
-        <select [(ngModel)]="nuevaVenta.estadoEntrega">
-            <option value="PENDIENTE">
-                Pendiente
-            </option>
-            <option value="ENTREGADO">
-                Entregado
-            </option>
-        </select>
-        <div class="acciones">
-            <button class="btn-cancelar" (click)="cerrarFormulario()">
-                Cancelar
-            </button>
-            <button class="btn-guardar" (click)="guardarVenta()">
-                Guardar
-            </button>
-        </div>
+      <div class="buscador">
+        <input
+          type="text"
+          placeholder="Buscar cliente, pago o entrega..."
+          [(ngModel)]="busqueda"
+        />
+      </div>
+
+      <div class="tabla-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Total</th>
+              <th>Pago</th>
+              <th>Entrega</th>
+              <th>Método</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let venta of lista">
+              <td>{{ venta.fecha }}</td>
+              <td><strong>{{ venta.nombreCliente }}</strong></td>
+              <td>S/ {{ venta.total | number:'1.2-2' }}</td>
+              <td>
+                <span class="badge" [ngClass]="venta.estadoPago === 'PAGADO' ? 'badge-success' : 'badge-warning'">
+                  {{ venta.estadoPago }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="venta.estadoEntrega === 'ENTREGADO' ? 'badge-success' : 'badge-danger'">
+                  {{ venta.estadoEntrega }}
+                </span>
+              </td>
+              <td>{{ venta.metodoPago }}</td>
+              <td>
+                <button class="btn-eliminar" (click)="eliminarVenta(venta.id)">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
+  </ng-container>
+</ng-container>
+
+<!-- MODAL -->
+<div class="modal-backdrop" *ngIf="mostrarFormulario">
+
+  <!-- datosModal$ se resuelve aquí, dentro del modal -->
+  <ng-container *ngIf="datosModal$ | async as datos; else cargando">
+    <div class="modal">
+      <h2>Nueva Venta</h2>
+
+      <div class="campo">
+        <label>Cliente</label>
+        <select [(ngModel)]="nuevaVenta.clienteId">
+          <option [ngValue]="0">Seleccione cliente</option>
+          <option *ngFor="let cliente of datos.clientes" [ngValue]="cliente.id">
+            {{ cliente.nombre }} {{ cliente.apellido }}
+          </option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label>Método de Pago</label>
+        <select [(ngModel)]="nuevaVenta.metodoPago">
+          <option value="EFECTIVO">Efectivo</option>
+          <option value="YAPE">Yape</option>
+          <option value="PLIN">Plin</option>
+          <option value="TRANSFERENCIA">Transferencia</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label>Estado de Pago</label>
+        <select [(ngModel)]="nuevaVenta.estadoPago">
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="PAGADO">Pagado</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label>Estado de Entrega</label>
+        <select [(ngModel)]="nuevaVenta.estadoEntrega">
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="ENTREGADO">Entregado</option>
+        </select>
+      </div>
+
+      <!-- AGREGAR PRODUCTO -->
+      <div class="seccion-productos">
+        <h3>Productos</h3>
+        <div class="fila-producto">
+          <select [(ngModel)]="productoSeleccionado">
+            <option [ngValue]="0">Seleccione producto</option>
+            <option *ngFor="let producto of datos.productos" [ngValue]="producto.id">
+              {{ producto.nombre }} (Stock: {{ producto.stock }})
+            </option>
+          </select>
+          <input type="number" min="1" [(ngModel)]="cantidadSeleccionada" placeholder="Cantidad" />
+          <button type="button" class="btn-agregar-producto" (click)="agregarProducto(datos.productos)">
+            Agregar
+          </button>
+        </div>
+      </div>
+
+      <!-- DETALLE -->
+      <div class="detalle-container" *ngIf="nuevaVenta.detalles.length > 0">
+        <h3>Detalle de Venta</h3>
+        <table class="tabla-detalle">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detalle of nuevaVenta.detalles; let i = index">
+              <td>{{ obtenerNombreProducto(datos.productos, detalle.productoId) }}</td>
+              <td>{{ detalle.cantidad }}</td>
+              <td>
+                <button class="btn-quitar" (click)="eliminarDetalle(i)">✕</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="acciones">
+        <button class="btn-cancelar" (click)="cerrarFormulario()">Cancelar</button>
+        <button class="btn-guardar" [disabled]="guardando" (click)="guardarVenta()">
+          {{ guardando ? 'Guardando...' : 'Guardar Venta' }}
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Mientras cargan clientes y productos -->
+  <ng-template #cargando>
+    <div class="modal">
+      <p>Cargando datos...</p>
+    </div>
+  </ng-template>
+
 </div>

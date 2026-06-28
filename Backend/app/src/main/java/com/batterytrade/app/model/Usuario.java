@@ -1,5 +1,7 @@
 package com.batterytrade.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,6 +27,7 @@ public class Usuario {
     @NotBlank(message = "El correo es obligatorio")
     private String correo;
 
+    @JsonIgnore
     @NotBlank(message = "La contraseña es obligatoria")
     private String password;
     

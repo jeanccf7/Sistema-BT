@@ -31,8 +31,6 @@ public class VentaDTO {
     private String metodoPago;
     private String observacion;
 
-    
-
     @NotEmpty(message = "Debe agregar al menos un producto")
     @Valid
     private List<DetalleVentaDTO> detalles;

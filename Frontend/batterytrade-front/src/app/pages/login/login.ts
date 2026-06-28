@@ -55,6 +55,11 @@ export class Login {
       next: (respuesta) => {
 
         localStorage.setItem(
+          'usuarioId',
+          respuesta.id.toString()
+        );
+
+        localStorage.setItem(
           'token',
           respuesta.token
         );

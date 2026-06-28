@@ -1,5 +1,7 @@
 package com.batterytrade.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -11,6 +13,7 @@ public class DetalleVenta {
 
     @ManyToOne
     @JoinColumn(name = "venta_id")
+    @JsonIgnore
     private Venta venta;
 
     @ManyToOne

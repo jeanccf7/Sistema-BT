@@ -272,3 +272,132 @@ padding:12px;
 border:1px solid #d1d5db;
 border-radius:8px;
 }
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.modal select,
+.modal input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.modal select:focus,
+.modal input:focus {
+  outline: none;
+  border-color: #f97316;
+}
+
+.modal {
+  width: 750px;
+  max-width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.seccion-productos {
+  margin-top: 10px;
+}
+
+.seccion-productos h3 {
+  margin-bottom: 12px;
+  color: #111827;
+}
+
+.fila-producto {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.fila-producto select {
+  flex: 3;
+}
+
+.fila-producto input {
+  flex: 1;
+}
+
+.btn-agregar-producto {
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn-agregar-producto:hover {
+  background: #1d4ed8;
+}
+
+.detalle-container {
+  margin-top: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.detalle-container h3 {
+  margin: 0;
+  padding: 14px;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.tabla-detalle {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-detalle th {
+  background: #111827;
+  color: white;
+  padding: 12px;
+}
+
+.tabla-detalle td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.btn-quitar {
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-quitar:hover {
+  background: #b91c1c;
+}
+
+.badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.badge-success {
+  background: #dcfce7;
+  color: #166534;
+}

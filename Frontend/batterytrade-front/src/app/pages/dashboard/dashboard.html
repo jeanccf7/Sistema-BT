@@ -1,144 +1,230 @@
-<main class="dashboard-page">
-  <section class="hero-section">
-    <div>
-      <span class="eyebrow"> Panel principal </span>
+<main class="db">
 
-      <h1>Hola, {{ nombre }}</h1>
+  <!-- SKELETON -->
+  <ng-container *ngIf="cargando">
+    <div class="sk sk-hero"></div>
+    <div class="sk-grid">
+      <div class="sk sk-kpi" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+  </ng-container>
 
-      <p>Bienvenido al sistema Battery Trade</p>
+  <ng-container *ngIf="!cargando">
+
+    <!-- ── HERO ──────────────────────────────────────────── -->
+    <header class="db-hero">
+      <div>
+        <span class="label" style="color:rgba(255,255,255,.5)">Panel principal</span>
+        <h1 class="db-hero__title">Hola, {{ nombre }} 👋</h1>
+        <p class="db-hero__sub">Battery Trade · {{ rol }}</p>
+      </div>
+      <div class="db-hero__right">
+        <div class="db-hero__chip">
+          <span class="db-hero__label">Hoy</span>
+          <strong>{{ fechaActual | date:'dd/MM/yyyy' }}</strong>
+        </div>
+        <div class="db-hero__chip">
+          <span class="db-hero__label">Tareas</span>
+          <strong>{{ porcentajeTareas }}%</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── KPI ───────────────────────────────────────────── -->
+    <section class="db-kpi">
+
+      <article class="kpi kpi-a">
+        <div class="kpi__head">
+          <div class="kpi__icon"></div>
+          <span class="kpi__lbl">Ventas hoy</span>
+        </div>
+        <strong class="kpi__val">S/ {{ ventasHoy | number:'1.2-2' }}</strong>
+        <span class="kpi__sub">Actualizado en tiempo real</span>
+        <svg class="kpi__spark" viewBox="0 0 72 26" fill="none">
+          <path [attr.d]="sparklinePath(ventasPorDia)" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </article>
+
+      <article class="kpi kpi-b">
+        <div class="kpi__head">
+          <div class="kpi__icon"></div>
+          <span class="kpi__lbl">Ingresos del mes</span>
+        </div>
+        <strong class="kpi__val">S/ {{ totalVentasMes | number:'1.2-2' }}</strong>
+        <span class="kpi__trend" [class.trend-up]="crecimientoMes > 0" [class.trend-down]="crecimientoMes < 0" [class.trend-flat]="crecimientoMes === 0">
+          {{ crecimientoMes > 0 ? '▲' : crecimientoMes < 0 ? '▼' : '–' }}
+          {{ crecimientoMes | number:'1.0-0' }}% vs mes anterior
+        </span>
+      </article>
+
+      <article class="kpi kpi-c">
+        <div class="kpi__head">
+          <div class="kpi__icon"></div>
+          <span class="kpi__lbl">Productos activos</span>
+        </div>
+        <strong class="kpi__val">{{ productos.length }}</strong>
+        <span class="kpi__sub">{{ stockAgotado.length }} agotados · {{ stockCritico.length }} críticos</span>
+      </article>
+
+      <article class="kpi kpi-d">
+        <div class="kpi__head">
+          <div class="kpi__icon"></div>
+          <span class="kpi__lbl">Clientes</span>
+        </div>
+        <strong class="kpi__val">{{ totalClientes }}</strong>
+        <span class="kpi__sub">Registrados en el sistema</span>
+      </article>
+
+    </section>
+
+    <!-- ── ACCESOS RÁPIDOS ────────────────────────────────── -->
+    <div class="db-quick">
+      <a class="quick-card" *ngFor="let a of accesosRapidos" [routerLink]="a.ruta">
+        <div class="quick-card__img">{{ a.icon }}</div>
+        <div class="quick-card__body">
+          <strong>{{ a.titulo }}</strong>
+          <span>{{ a.descripcion }}</span>
+        </div>
+        <span class="quick-card__arrow">→</span>
+      </a>
     </div>
 
-    <div class="date-card">
-      <span>Hoy</span>
+    <!-- ── GRID ───────────────────────────────────────────── -->
+    <div class="db-grid">
 
-      <strong>
-        {{ fechaActual | date: 'dd/MM/yyyy' }}
-      </strong>
+      <!-- columna izquierda -->
+      <div class="db-col">
 
-      <small>
-        {{ rol }}
-      </small>
+        <!-- Ventas recientes -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <span class="label">Ventas</span>
+              <h2 class="card-head__title">Recientes</h2>
+            </div>
+            <a class="text-link" [routerLink]="'/ventas'">Ver todas →</a>
+          </div>
+          <div class="sales-list scrollable">
+            <ng-container *ngIf="ventasRecientes.length > 0; else sinVentas">
+              <article class="sale-row" *ngFor="let v of ventasRecientes; trackBy: trackById">
+                <div class="sale-row__av">{{ (v.nombreCliente ?? 'V')[0] }}</div>
+                <div class="sale-row__info">
+                  <strong>#{{ v.id }}{{ v.nombreCliente ? ' · ' + v.nombreCliente : '' }}</strong>
+                  <span>{{ v.fecha }} · {{ v.metodoPago }}</span>
+                </div>
+                <div class="sale-row__right">
+                  <strong>S/ {{ v.total | number:'1.2-2' }}</strong>
+                  <span class="badge"
+                    [class.badge-ok]="v.estadoPago === 'PAGADO'"
+                    [class.badge-warn]="v.estadoPago === 'PENDIENTE'"
+                    [class.badge-err]="v.estadoPago === 'CANCELADO'">
+                    {{ v.estadoPago }}
+                  </span>
+                </div>
+              </article>
+            </ng-container>
+            <ng-template #sinVentas>
+              <p class="empty">Sin ventas registradas aún.</p>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Métodos de pago -->
+        <div class="card" *ngIf="metodosPago.length > 0">
+          <div class="card-head">
+            <div>
+              <span class="label">Estadísticas</span>
+              <h2 class="card-head__title">Métodos de pago</h2>
+            </div>
+          </div>
+          <div class="metodos">
+            <div class="metodo-row" *ngFor="let m of metodosPago">
+              <span class="metodo-row__lbl">{{ m.metodo }}</span>
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="(m.count / (ventasRecientes.length || 1)) * 100"></div>
+              </div>
+              <span class="metodo-row__cnt">{{ m.count }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- columna derecha -->
+      <div class="db-col">
+
+        <!-- Stock crítico -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <span class="label">Inventario</span>
+              <h2 class="card-head__title">Stock crítico</h2>
+            </div>
+            <a class="text-link" [routerLink]="'/productos'">Ver todo →</a>
+          </div>
+          <ng-container *ngIf="stockCritico.length > 0; else sinStock">
+            <div class="stock-list">
+              <div class="stock-row" *ngFor="let p of stockCritico">
+                <strong>{{ p.nombre }}</strong>
+                <span>{{ p.marca }}</span>
+                <div class="stock-bar">
+                  <div class="progress-track">
+                    <div class="progress-fill"
+                      [style.width.%]="stockPorcentaje(p.stock)"
+                      [style.background]="stockColor(p.stock)">
+                    </div>
+                  </div>
+                  <span class="stock-qty" [style.color]="stockColor(p.stock)">{{ p.stock }} uds</span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #sinStock>
+            <p class="empty">✅ Stock suficiente en todos los productos.</p>
+          </ng-template>
+        </div>
+
+        <!-- Agotados -->
+        <div class="card card--danger" *ngIf="stockAgotado.length > 0">
+          <div class="card-head">
+            <div>
+              <span class="label" style="color:#ef4444">Urgente</span>
+              <h2 class="card-head__title">Productos agotados</h2>
+            </div>
+            <span class="badge badge-err">{{ stockAgotado.length }}</span>
+          </div>
+          <div class="agotados">
+            <div class="agotado-row" *ngFor="let p of stockAgotado">
+              <span class="agotado-dot"></span>
+              <span>{{ p.nombre }}</span>
+              <span class="agotado-brand">{{ p.marca }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checklist -->
+        <div class="card card--task">
+          <div class="card-head">
+            <div>
+              <span class="label">Checklist</span>
+              <h2 class="card-head__title">Tareas · {{ porcentajeTareas }}%</h2>
+            </div>
+          </div>
+          <div class="task-progress">
+            <div class="progress-track task-progress__bar">
+              <div class="progress-fill" [style.width.%]="porcentajeTareas"></div>
+            </div>
+          </div>
+          <div class="task-list">
+            <label class="task-item" *ngFor="let t of tareas">
+              <input type="checkbox" [(ngModel)]="t.completada" (change)="guardarTareas()" />
+              <span [class.done]="t.completada">{{ t.texto }}</span>
+              <span class="prio" [class]="'prio-' + t.prioridad">{{ t.prioridad }}</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </section>
 
-  <section class="metrics-grid">
-    <article
-      class="metric-card"
-      *ngFor="let metrica of metricas"
-      [class.metric-positive]="metrica.estado === 'positivo'"
-      [class.metric-warning]="metrica.estado === 'alerta'"
-    >
-      <span>{{ metrica.titulo }}</span>
-
-      <strong>{{ metrica.valor }}</strong>
-
-      <small>{{ metrica.detalle }}</small>
-    </article>
-  </section>
-
-  <section class="content-grid">
-    <div class="main-column">
-      <section class="section-block">
-        <div class="section-header">
-          <div>
-            <span class="eyebrow"> Acciones </span>
-
-            <h2>Accesos rápidos</h2>
-          </div>
-        </div>
-
-        <div class="quick-grid">
-          <article class="quick-card" *ngFor="let acceso of accesosRapidos">
-            <h3>
-              {{ acceso.titulo }}
-            </h3>
-
-            <p>
-              {{ acceso.descripcion }}
-            </p>
-
-            <a [routerLink]="acceso.ruta">
-              {{ acceso.accion }}
-            </a>
-          </article>
-        </div>
-      </section>
-
-      <section class="section-block">
-        <div class="section-header">
-          <div>
-            <span class="eyebrow"> Inventario </span>
-
-            <h2>Stock crítico</h2>
-          </div>
-        </div>
-
-        <div class="stock-list">
-          <article class="stock-item" *ngFor="let item of stockCritico">
-            <div>
-              <strong>
-                {{ item.nombre }}
-              </strong>
-
-              <span>
-                {{ item.marca }}
-              </span>
-            </div>
-
-            <div>
-              <strong>
-                {{ item.stock }}
-              </strong>
-            </div>
-          </article>
-        </div>
-      </section>
-    </div>
-
-    <aside class="side-column">
-      <section class="section-block">
-        <div class="section-header">
-          <div>
-            <span class="eyebrow"> Ventas </span>
-
-            <h2>Recientes</h2>
-          </div>
-        </div>
-
-        <div class="sales-list scrollable">
-          <article class="sale-item" *ngFor="let venta of ventasRecientes">
-            <div>
-              <strong> Venta #{{ venta.id }} </strong>
-
-              <span>
-                {{ venta.fecha }}
-              </span>
-            </div>
-
-            <div>
-              <strong> S/ {{ venta.total }} </strong>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="section-block task-block">
-        <div class="section-header">
-          <div>
-            <span class="eyebrow"> Checklist </span>
-
-            <h2>Tareas</h2>
-          </div>
-        </div>
-
-        <label class="task-item" *ngFor="let tarea of tareas">
-          <input type="checkbox" [(ngModel)]="tarea.completada" (change)="guardarTareas()" />
-
-          <span>
-            {{ tarea.texto }}
-          </span>
-        </label>
-      </section>
-    </aside>
-  </section>
+  </ng-container>
 </main>

@@ -21,14 +21,12 @@ public class Venta {
     @ManyToOne
     @JoinColumn(name = "vendedor_id")
     private Usuario vendedor;
-
     private double total;
-
     private String estadoPago; // COMPLETADO | PENDIENTE
-
     private String estadoEntrega; // COMPLETADO | PENDIENTE
-
     private String metodoPago;
+    private String observacion;    
+   
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
     private List<DetalleVenta> detalles;
@@ -97,7 +95,12 @@ public class Venta {
     public void setMetodoPago(String metodoPago){
         this.metodoPago = metodoPago;
     }
-
+    public String getObservacion() {
+        return observacion;
+    }
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
+    }
     public List<DetalleVenta> getDetalles() {
         return detalles;
     }

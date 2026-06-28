@@ -23,8 +23,8 @@ public class Producto {
     @PositiveOrZero(message = "El stock no puede ser negativo")
     private int stock;
 
-    @ManyToOne
-    @JoinColumn(name = "categoria_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
     
     public Producto() {

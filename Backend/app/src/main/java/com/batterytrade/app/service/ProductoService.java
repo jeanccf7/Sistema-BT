@@ -19,9 +19,14 @@ public class ProductoService {
         this.repository = repository;
     }
 
-    public Producto guardar(
-            Producto producto) {
+    public Producto guardar(Producto producto) {
+        if (producto.getCategoria() == null ||
+        producto.getCategoria().getId() == null ||
+        producto.getCategoria().getId() == 0) {
 
+        throw new IllegalArgumentException(
+                "Debe seleccionar una categoría");
+    }
         return repository.save(producto);
     }
 

@@ -1,3 +1,4 @@
+
 <div class="productos-container">
 
   <div class="header">
@@ -61,7 +62,7 @@
     <input type="number" placeholder="Precio" [(ngModel)]="nuevoProducto.precio" />
     <input type="number" placeholder="Stock" [(ngModel)]="nuevoProducto.stock" />
     <select [(ngModel)]="nuevoProducto.categoria">
-      <option [ngValue]="null">
+      <option [ngValue]="0">
         Seleccione categoría
       </option>
       <option *ngFor="let categoria of categorias" [ngValue]="categoria">

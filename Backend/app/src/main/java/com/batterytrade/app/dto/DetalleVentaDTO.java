@@ -15,12 +15,10 @@ public class DetalleVentaDTO {
     @Positive(message = "La cantidad debe ser mayor a 0")
     private int cantidad;
 
-    @Positive(message = "El precio debe ser mayor a 0")
     private double precioUnitario;
 
-    @Positive(message = "El subtotal debe ser mayor a 0")
     private double subtotal;
-
+    
     public DetalleVentaDTO() {
     }
 

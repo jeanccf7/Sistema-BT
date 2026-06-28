@@ -1,5 +1,5 @@
 package com.batterytrade.app.dto;
-
+import jakarta.validation.constraints.NotNull;
 public class ProductoDTO {
 
     private Long id;
@@ -7,6 +7,8 @@ public class ProductoDTO {
     private String marca;
     private double precio;
     private int stock;
+
+    @NotNull(message = "Debe seleccionar una categoría")
     private Long categoriaId;
 
     public ProductoDTO() {

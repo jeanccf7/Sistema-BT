@@ -4,9 +4,12 @@ import com.batterytrade.app.dto.VentaDTO;
 import com.batterytrade.app.model.Venta;
 import com.batterytrade.app.service.VentaService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ventas")
@@ -31,12 +34,21 @@ public class VentaController {
 
     @PostMapping
     public VentaDTO registrar(
-            @RequestBody VentaDTO ventaDTO) {
+            @Valid @RequestBody VentaDTO ventaDTO) {
         return service.registrar(ventaDTO);
     }
 
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         service.eliminar(id);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> manejarErrorDeVenta(
+            IllegalArgumentException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("mensaje", ex.getMessage()));
     }
 }
