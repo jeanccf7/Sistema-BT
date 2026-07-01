@@ -57,10 +57,15 @@
 <div class="modal-backdrop" *ngIf="mostrarFormulario">
   <div class="modal">
     <h2>Nuevo Producto</h2>
+    <label>Nombre:</label>
     <input type="text" placeholder="Nombre" [(ngModel)]="nuevoProducto.nombre" />
+    <label>Marca:</label>
     <input type="text" placeholder="Marca" [(ngModel)]="nuevoProducto.marca" />
+    <label>Precio:</label>
     <input type="number" placeholder="Precio" [(ngModel)]="nuevoProducto.precio" />
+    <label>Stock:</label>
     <input type="number" placeholder="Stock" [(ngModel)]="nuevoProducto.stock" />
+    <label>Categoría:</label>
     <select [(ngModel)]="nuevoProducto.categoria">
       <option [ngValue]="0">
         Seleccione categoría

@@ -1,7 +1,7 @@
 package com.batterytrade.app.controller;
 
 import com.batterytrade.app.model.Producto;
-import com.batterytrade.app.service.ProductoService;
+import com.batterytrade.app.service.IProductoService;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -11,10 +11,10 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class ProductoController {
 
-    private final ProductoService service;
+    private final IProductoService service;
 
     public ProductoController(
-            ProductoService service) {
+            IProductoService service) {
 
         this.service = service;
     }

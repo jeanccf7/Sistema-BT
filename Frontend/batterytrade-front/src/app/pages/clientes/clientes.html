@@ -64,11 +64,17 @@
             : 'Nuevo Cliente'
             }}
         </h2>
+        <label>DNI:</label>
         <input type="text" placeholder="DNI" [(ngModel)]="nuevoCliente.dni">
+        <label>Nombre:</label>
         <input type="text" placeholder="Nombre" [(ngModel)]="nuevoCliente.nombre">
+        <label>Apellido:</label>
         <input type="text" placeholder="Apellido" [(ngModel)]="nuevoCliente.apellido">
+        <label>Teléfono:</label>
         <input type="text" placeholder="Teléfono" [(ngModel)]="nuevoCliente.telefono">
+        <label>Dirección:</label>
         <input type="text" placeholder="Dirección" [(ngModel)]="nuevoCliente.direccion">
+        <label>Correo:</label>
         <input type="email" placeholder="Correo" [(ngModel)]="nuevoCliente.correo">
         <div class="acciones">
             <button class="btn-cancelar" (click)="cerrarFormulario()">

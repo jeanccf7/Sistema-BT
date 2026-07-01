@@ -48,9 +48,10 @@
 <div class="modal-backdrop" *ngIf="mostrarFormulario">
   <div class="modal">
     <h2>{{ editando ? 'Editar Categoría' : 'Nueva Categoría' }}</h2>
-
+    <label>Nombre:</label>
     <input type="text" placeholder="Nombre" [(ngModel)]="nuevaCategoria.nombre" />
 
+    <label>Descripción:</label>
     <textarea rows="4" placeholder="Descripción" [(ngModel)]="nuevaCategoria.descripcion"></textarea>
 
     <div class="acciones">
