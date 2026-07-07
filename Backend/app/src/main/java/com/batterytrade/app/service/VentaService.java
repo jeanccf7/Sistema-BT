@@ -7,6 +7,7 @@ import com.batterytrade.app.model.DetalleVenta;
 import com.batterytrade.app.model.Producto;
 import com.batterytrade.app.model.Usuario;
 import com.batterytrade.app.model.Venta;
+import com.batterytrade.app.exception.ResourceNotFoundException;
 import com.batterytrade.app.repository.ClienteRepository;
 import com.batterytrade.app.repository.ProductoRepository;
 import com.batterytrade.app.repository.UsuarioRepository;
@@ -14,6 +15,7 @@ import com.batterytrade.app.repository.VentaRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.batterytrade.app.factory.VentaFactory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ import java.util.List;
 
 @Service
 public class VentaService {
+
+    // La transacción agrupa la creación de la venta y la actualización del stock.
 
 private final VentaRepository ventaRepository;
 private final ProductoRepository productoRepository;
@@ -39,16 +43,24 @@ public VentaService(
     this.usuarioRepository = usuarioRepository;
 }
 
-public List<Venta> listar() {
-    return ventaRepository.findAll();
+@Transactional(readOnly = true)
+public List<VentaDTO> listar() {
+    return ventaRepository.findAll().stream()
+            .map(this::mapToDto)
+            .toList();
 }
 
-public Venta buscar(Long id) {
-    return ventaRepository.findById(id)
-            .orElse(null);
+@Transactional(readOnly = true)
+public VentaDTO buscar(Long id) {
+    Venta venta = ventaRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Venta no encontrada"));
+    return mapToDto(venta);
 }
 
 public void eliminar(Long id) {
+    if (!ventaRepository.existsById(id)) {
+        throw new ResourceNotFoundException("Venta no encontrada");
+    }
     ventaRepository.deleteById(id);
 }
 
@@ -77,13 +89,7 @@ public VentaDTO registrar(VentaDTO ventaDTO) {
             .orElseThrow(() ->
                     new IllegalArgumentException("Vendedor no encontrado"));
 
-    Venta venta = new Venta();
-
-    venta.setFecha(LocalDate.now());
-
-    venta.setCliente(cliente);
-
-    venta.setVendedor(vendedor);
+        Venta venta = VentaFactory.create(cliente, vendedor);
 
     venta.setEstadoPago(
             ventaDTO.getEstadoPago() == null
@@ -139,9 +145,7 @@ public VentaDTO registrar(VentaDTO ventaDTO) {
         detalle.setPrecioUnitario(
                 producto.getPrecio());
 
-        detalle.setSubtotal(
-                detalleDTO.getCantidad()
-                        * producto.getPrecio());
+        detalle.setSubtotal(detalle.calcularSubtotal());
 
         producto.setStock(
                 producto.getStock()
@@ -196,5 +200,30 @@ public VentaDTO registrar(VentaDTO ventaDTO) {
     return respuesta;
 }
 
+private VentaDTO mapToDto(Venta venta) {
+    VentaDTO dto = new VentaDTO();
+    dto.setId(venta.getId());
+    dto.setFecha(venta.getFecha());
+
+    if (venta.getCliente() != null) {
+        dto.setClienteId(venta.getCliente().getId());
+        dto.setNombreCliente(
+                venta.getCliente().getNombre() + " " + venta.getCliente().getApellido());
+    }
+
+    if (venta.getVendedor() != null) {
+        dto.setVendedorId(venta.getVendedor().getId());
+        dto.setNombreVendedor(
+                venta.getVendedor().getNombre() + " " + venta.getVendedor().getApellido());
+    }
+
+    dto.setTotal(venta.getTotal());
+    dto.setEstadoPago(venta.getEstadoPago());
+    dto.setEstadoEntrega(venta.getEstadoEntrega());
+    dto.setMetodoPago(venta.getMetodoPago());
+    dto.setObservacion(venta.getObservacion());
+
+    return dto;
+}
 
 }

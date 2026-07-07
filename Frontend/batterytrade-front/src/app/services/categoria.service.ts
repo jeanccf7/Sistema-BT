@@ -24,10 +24,7 @@ export class CategoriaService {
     return this.http.get<Categoria[]>(this.api);
   }
 
-  guardar(
-    categoria: NuevaCategoria
-  ): Observable<Categoria> {
-
+  guardar(categoria: NuevaCategoria): Observable<Categoria> {
     return this.http.post<Categoria>(
       this.api,
       categoria

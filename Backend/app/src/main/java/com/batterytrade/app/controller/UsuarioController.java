@@ -2,7 +2,7 @@ package com.batterytrade.app.controller;
 
 import com.batterytrade.app.model.Usuario;
 import com.batterytrade.app.service.UsuarioService;
-
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,8 +27,16 @@ public class UsuarioController {
 
     @PostMapping
     public Usuario guardar(
-            @RequestBody Usuario usuario) {
+            @Valid @RequestBody Usuario usuario) {
+        return service.guardar(usuario);
+    }
 
+    @PutMapping("/{id}")
+    public Usuario actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Usuario usuario) {
+
+        usuario.setId(id);
         return service.guardar(usuario);
     }
 }

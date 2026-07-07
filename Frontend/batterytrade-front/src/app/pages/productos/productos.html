@@ -66,11 +66,11 @@
     <label>Stock:</label>
     <input type="number" placeholder="Stock" [(ngModel)]="nuevoProducto.stock" />
     <label>Categoría:</label>
-    <select [(ngModel)]="nuevoProducto.categoria">
+    <select [(ngModel)]="categoriaSeleccionadaId">
       <option [ngValue]="0">
         Seleccione categoría
       </option>
-      <option *ngFor="let categoria of categorias" [ngValue]="categoria">
+      <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">
         {{ categoria.nombre }}
       </option>
     </select>

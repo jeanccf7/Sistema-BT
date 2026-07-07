@@ -1,5 +1,6 @@
 package com.batterytrade.app.service;
 
+import com.batterytrade.app.exception.ResourceNotFoundException;
 import com.batterytrade.app.model.Cliente;
 import com.batterytrade.app.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
@@ -26,10 +27,13 @@ public class ClienteService {
 
     public Cliente buscar(Long id) {
         return repository.findById(id)
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
     }
 
     public void eliminar(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Cliente no encontrado");
+        }
         repository.deleteById(id);
     }
 }

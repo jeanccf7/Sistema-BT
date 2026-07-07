@@ -20,6 +20,7 @@ export class Productos implements OnInit, AfterViewInit {
   categorias: Categoria[] = [];
   busqueda = '';
   mostrarFormulario = false;
+  categoriaSeleccionadaId = 0;
   nuevoProducto: NuevoProducto = {
     nombre: '',
     marca: '',
@@ -86,6 +87,7 @@ export class Productos implements OnInit, AfterViewInit {
 
   cerrarFormulario(): void {
     this.mostrarFormulario = false;
+    this.categoriaSeleccionadaId = 0;
 
     this.nuevoProducto = {
       nombre: '',
@@ -102,14 +104,25 @@ export class Productos implements OnInit, AfterViewInit {
   }
 
   guardarProducto(): void {
-    if (!this.nuevoProducto.categoria ||
-      this.nuevoProducto.categoria.id === 0) {
+    if (this.categoriaSeleccionadaId === 0) {
+      alert('Debe seleccionar una categoría');
+      return;
+    }
 
-    alert('Debe seleccionar una categoría');
+    const categoriaSeleccionada = this.categorias.find(
+      (categoria) => categoria.id === this.categoriaSeleccionadaId,
+    );
 
-    return;
-  }
-    this.productoService.guardar(this.nuevoProducto).subscribe({
+    const producto: NuevoProducto = {
+      ...this.nuevoProducto,
+      categoria: categoriaSeleccionada ?? {
+        id: this.categoriaSeleccionadaId,
+        nombre: '',
+        descripcion: '',
+      },
+    };
+
+    this.productoService.guardar(producto).subscribe({
       next: () => {
         this.cargarProductos();
         this.cerrarFormulario();

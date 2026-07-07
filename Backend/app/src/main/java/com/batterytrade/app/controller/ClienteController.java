@@ -2,7 +2,7 @@ package com.batterytrade.app.controller;
 
 import com.batterytrade.app.model.Cliente;
 import com.batterytrade.app.service.ClienteService;
-
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,14 +31,15 @@ public class ClienteController {
     }
     @PostMapping
     public Cliente guardar(
-            @RequestBody Cliente cliente) {
-
+            @Valid @RequestBody Cliente cliente) {
         return service.guardar(cliente);
-    } 
-       @PutMapping("/{id}")
-        public Cliente actualizar(
-        @PathVariable Long id,
-        @RequestBody Cliente cliente) {
+    }
+
+    @PutMapping("/{id}")
+    public Cliente actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Cliente cliente) {
+
         cliente.setId(id);
         return service.guardar(cliente);
     }

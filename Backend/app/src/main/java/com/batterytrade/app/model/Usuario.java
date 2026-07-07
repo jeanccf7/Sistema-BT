@@ -1,6 +1,7 @@
 package com.batterytrade.app.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -8,10 +9,12 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "usuarios")
+@JsonIgnoreProperties(value = {"id"}, allowGetters = true)
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotBlank(message = "El código es obligatorio")
@@ -27,10 +30,10 @@ public class Usuario {
     @NotBlank(message = "El correo es obligatorio")
     private String correo;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotBlank(message = "La contraseña es obligatoria")
     private String password;
-    
+
     private String rol;
 
     public Usuario() {

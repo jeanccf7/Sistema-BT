@@ -1,7 +1,7 @@
 package com.batterytrade.app.controller;
 
 import com.batterytrade.app.model.Producto;
-import com.batterytrade.app.service.IProductoService;
+import com.batterytrade.app.service.ProductoService;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -11,10 +11,10 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class ProductoController {
 
-    private final IProductoService service;
+    private final ProductoService service;
 
     public ProductoController(
-            IProductoService service) {
+            ProductoService service) {
 
         this.service = service;
     }
@@ -34,7 +34,14 @@ public class ProductoController {
     @PostMapping
     public Producto guardar(
             @Valid @RequestBody Producto producto) {
+        return service.guardar(producto);
+    }
 
+    @PutMapping("/{id}")
+    public Producto actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Producto producto) {
+        producto.setId(id);
         return service.guardar(producto);
     }
 

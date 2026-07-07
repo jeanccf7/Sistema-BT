@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ventas")
@@ -23,12 +22,12 @@ public class VentaController {
     }
 
     @GetMapping
-    public List<Venta> listar() {
+    public List<VentaDTO> listar() {
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    public Venta buscar(@PathVariable Long id) {
+    public VentaDTO buscar(@PathVariable Long id) {
         return service.buscar(id);
     }
 
@@ -41,14 +40,5 @@ public class VentaController {
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         service.eliminar(id);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> manejarErrorDeVenta(
-            IllegalArgumentException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("mensaje", ex.getMessage()));
     }
 }

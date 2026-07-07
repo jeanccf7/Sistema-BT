@@ -1,15 +1,19 @@
 package com.batterytrade.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "ventas")
+@JsonIgnoreProperties(value = {"id"}, allowGetters = true)
 public class Venta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     private LocalDate fecha;

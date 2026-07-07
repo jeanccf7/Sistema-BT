@@ -1,5 +1,6 @@
 package com.batterytrade.app.service;
 
+import com.batterytrade.app.exception.ResourceNotFoundException;
 import com.batterytrade.app.model.Categoria;
 import com.batterytrade.app.repository.CategoriaRepository;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,8 @@ public class CategoriaService {
     }
 
     public Categoria buscar(Long id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
     }
 
     public Categoria guardar(Categoria categoria) {
@@ -28,6 +30,9 @@ public class CategoriaService {
     }
 
     public void eliminar(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Categoría no encontrada");
+        }
         repository.deleteById(id);
     }
 }

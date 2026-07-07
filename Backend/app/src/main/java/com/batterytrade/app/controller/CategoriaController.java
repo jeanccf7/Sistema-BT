@@ -2,6 +2,7 @@ package com.batterytrade.app.controller;
 
 import com.batterytrade.app.model.Categoria;
 import com.batterytrade.app.service.CategoriaService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,15 +29,14 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public Categoria guardar(@RequestBody Categoria categoria) {
+    public Categoria guardar(@Valid @RequestBody Categoria categoria) {
         return service.guardar(categoria);
     }
 
     @PutMapping("/{id}")
     public Categoria actualizar(
             @PathVariable Long id,
-            @RequestBody Categoria categoria) {
-
+            @Valid @RequestBody Categoria categoria) {
         categoria.setId(id);
         return service.guardar(categoria);
     }
