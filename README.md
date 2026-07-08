@@ -70,6 +70,8 @@ java -jar target/app-0.0.1-SNAPSHOT.jar
 
 El backend queda disponible en `http://localhost:8080`.
 
+Interfaz de Swagger `http://localhost:8080/swagger-ui/index.html#`
+
 ### Endpoints importantes
 
 - `GET /api/ventas`
