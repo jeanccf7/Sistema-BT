@@ -1,18 +1,23 @@
 package com.batterytrade.app.payment;
 
 /**
- * Factory sencillo para obtener la estrategia de pago según el método.
+ * Factory sencilla para obtener la estrategia de pago según el método.
  */
 public class PaymentStrategyFactory {
 
     public static PaymentStrategy getStrategy(String metodoPago) {
-        if (metodoPago == null) return new EfectivoStrategy();
+        if (metodoPago == null) {
+            return new EfectivoStrategy();
+        }
+
         switch (metodoPago.toUpperCase()) {
             case "YAPE":
                 return new YapeStrategy();
             case "PLIN":
+                return new PlinStrategy();
             case "TRANSFERENCIA":
-                return new EfectivoStrategy();
+                return new TransferenciaStrategy();
+            case "EFECTIVO":
             default:
                 return new EfectivoStrategy();
         }

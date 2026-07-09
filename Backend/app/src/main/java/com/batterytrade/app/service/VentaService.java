@@ -1,5 +1,6 @@
 package com.batterytrade.app.service;
 
+import com.batterytrade.app.adapter.SunatAPI;
 import com.batterytrade.app.dto.DetalleVentaDTO;
 import com.batterytrade.app.dto.VentaDTO;
 import com.batterytrade.app.model.Cliente;
@@ -8,6 +9,8 @@ import com.batterytrade.app.model.Producto;
 import com.batterytrade.app.model.Usuario;
 import com.batterytrade.app.model.Venta;
 import com.batterytrade.app.exception.ResourceNotFoundException;
+import com.batterytrade.app.payment.PaymentStrategy;
+import com.batterytrade.app.payment.PaymentStrategyFactory;
 import com.batterytrade.app.repository.ClienteRepository;
 import com.batterytrade.app.repository.ProductoRepository;
 import com.batterytrade.app.repository.UsuarioRepository;
@@ -30,6 +33,7 @@ private final VentaRepository ventaRepository;
 private final ProductoRepository productoRepository;
 private final ClienteRepository clienteRepository;
 private final UsuarioRepository usuarioRepository;
+private final SunatAPI sunatAPI = new SunatAPI();
 
 public VentaService(
         VentaRepository ventaRepository,
@@ -165,6 +169,14 @@ public VentaDTO registrar(VentaDTO ventaDTO) {
     Venta ventaGuardada =
             ventaRepository.save(venta);
 
+    String mensajeSunat = sunatAPI.sendInvoice(ventaGuardada);
+    String mensajePago = null;
+
+    if ("PAGADO".equalsIgnoreCase(ventaGuardada.getEstadoPago())) {
+        PaymentStrategy paymentStrategy = PaymentStrategyFactory.getStrategy(ventaGuardada.getMetodoPago());
+        mensajePago = paymentStrategy.handle(ventaGuardada);
+    }
+
     VentaDTO respuesta = new VentaDTO();
 
     respuesta.setId(
@@ -196,6 +208,8 @@ public VentaDTO registrar(VentaDTO ventaDTO) {
 
     respuesta.setMetodoPago(
             ventaGuardada.getMetodoPago());
+    respuesta.setMensajeSunat(mensajeSunat);
+    respuesta.setMensajePago(mensajePago);
 
     return respuesta;
 }

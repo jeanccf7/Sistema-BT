@@ -136,23 +136,63 @@ Si cambias el host o puerto del backend, actualiza las URLs en `Frontend/battery
 
 ## Patrones implementados
 
-En el proyecto se documentaron e introdujeron tres patrones (uno por cada categoría):
+En el proyecto se integraron tres patrones de diseño para separar responsabilidades y hacer más mantenible el flujo de ventas.
 
-- **Creacional — Factory**: `VentaFactory` centraliza la creación de instancias de `Venta`.
-	- Archivo: `Backend/app/src/main/java/com/batterytrade/app/factory/VentaFactory.java`
-	- Uso: `VentaService` utiliza `VentaFactory.create(cliente, vendedor)` en vez de instanciar `new Venta()` directamente.
+### 1) Factory (creacional)
 
-- **Estructural — Adapter**: `SunatAPI` actúa como adaptador para integrar con un servicio externo (SUNAT).
-	- Archivo: `Backend/app/src/main/java/com/batterytrade/app/adapter/SunatAPI.java`
-	- Uso: Después de guardar una venta, `VentaService` llama a `sunat.sendInvoice(venta)` (implementación simulada).
+El patrón Factory se usa para centralizar la creación de objetos de tipo `Venta`.
 
-- **Comportamental — Strategy**: `PaymentStrategy` define comportamientos diferentes según el método de pago (Efectivo, Yape,...).
-	- Archivos:
-		- `Backend/app/src/main/java/com/batterytrade/app/payment/PaymentStrategy.java`
-		- `Backend/app/src/main/java/com/batterytrade/app/payment/EfectivoStrategy.java`
-		- `Backend/app/src/main/java/com/batterytrade/app/payment/YapeStrategy.java`
-		- `Backend/app/src/main/java/com/batterytrade/app/payment/PaymentStrategyFactory.java`
-	- Uso: `VentaService` obtiene la estrategia con `PaymentStrategyFactory.getStrategy(metodo)` y la ejecuta tras persistir la venta.
+- Archivo principal: `Backend/app/src/main/java/com/batterytrade/app/factory/VentaFactory.java`
+- Propósito: evitar que la lógica de negocio cree directamente nuevas instancias de `Venta` con `new Venta()` en distintos puntos.
+- Beneficio: si en el futuro cambia la forma en que se construye una venta, solo se modifica la factory.
+
+En este proyecto, `VentaService` utiliza `VentaFactory.create(cliente, vendedor)` para crear la entidad de venta con datos base como fecha, cliente y vendedor. Esto mantiene el código más limpio y desacoplado.
+
+### 2) Adapter (estructural)
+
+El patrón Adapter se usa para integrar una clase o sistema externo con la lógica interna del proyecto sin acoplar directamente los modelos del sistema a la API externa.
+
+- Archivos principales:
+  - `Backend/app/src/main/java/com/batterytrade/app/adapter/SunatAPI.java`
+  - `Backend/app/src/main/java/com/batterytrade/app/adapter/SunatAdapter.java`
+  - `Backend/app/src/main/java/com/batterytrade/app/adapter/SunatExterna.java`
+- Propósito: simular la comunicación con SUNAT sin modificar la estructura interna de la venta.
+- Funcionamiento: cuando se guarda una venta, el backend invoca `sunat.sendInvoice(ventaGuardada)`. El adaptador transforma o encapsula esa operación y devuelve un mensaje de texto como `SUNAT adapter: comprobante enviado para la venta X`.
+
+Este mensaje se devuelve en la respuesta de la venta y luego se imprime en consola desde el frontend para mostrar que la integración simulada se ejecutó.
+
+### 3) Strategy (comportamental)
+
+El patrón Strategy se usa para seleccionar distintos comportamientos según el método de pago elegido por el usuario.
+
+- Archivos principales:
+  - `Backend/app/src/main/java/com/batterytrade/app/payment/PaymentStrategy.java`
+  - `Backend/app/src/main/java/com/batterytrade/app/payment/EfectivoStrategy.java`
+  - `Backend/app/src/main/java/com/batterytrade/app/payment/YapeStrategy.java`
+  - `Backend/app/src/main/java/com/batterytrade/app/payment/PlinStrategy.java`
+  - `Backend/app/src/main/java/com/batterytrade/app/payment/TransferenciaStrategy.java`
+  - `Backend/app/src/main/java/com/batterytrade/app/payment/PaymentStrategyFactory.java`
+- Propósito: evitar grandes condicionales para decidir qué hacer con cada tipo de pago.
+- Funcionamiento: la factory devuelve la estrategia adecuada según el valor de `metodoPago` elegido en el formulario. Si la venta se guarda como `PAGADO`, el backend ejecuta esa estrategia y devuelve un mensaje como `Procesando pago YAPE para la venta X`.
+
+### Flujo real de registro de ventas
+
+1. En la vista de ventas del frontend, al hacer clic en Guardar Venta, se construye un objeto con cliente, vendedor, método de pago, estado de pago, estado de entrega y detalles.
+2. El frontend envía esa información al endpoint `POST /api/ventas` mediante `VentaService`.
+3. En el backend, `VentaService.registrar()` persiste la venta en base de datos.
+4. Inmediatamente después, se ejecuta el adapter SUNAT para simular el envío del comprobante y se genera un mensaje de respuesta.
+5. Si la venta quedó marcada como `PAGADO`, se activa la strategy correspondiente según el `metodoPago` y se genera otro mensaje.
+6. Ambos mensajes se devuelven en la respuesta de la venta y el frontend los muestra en consola para evidenciar la ejecución de los patrones.
+
+### Relación entre los tres patrones
+
+Aunque cada patrón resuelve un problema distinto, en este proyecto trabajan juntos en el mismo flujo:
+
+- `Factory` crea la venta base.
+- `Adapter` simula la integración con SUNAT al guardar la venta.
+- `Strategy` define cómo procesar el pago según el método seleccionado.
+
+Esta combinación permite que la lógica de negocio quede más organizada, extensible y fácil de entender.
 
 ### Ejemplos de prueba (curl)
 

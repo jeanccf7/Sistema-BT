@@ -11,6 +11,8 @@ export interface Venta {
   estadoPago: string;
   estadoEntrega: string;
   metodoPago: string;
+  mensajeSunat?: string;
+  mensajePago?: string;
 }
 
 export interface NuevaVenta {

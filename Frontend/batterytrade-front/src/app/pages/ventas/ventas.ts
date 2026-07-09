@@ -138,7 +138,11 @@ export class Ventas {
     console.log('VENTA A ENVIAR');
     console.log(JSON.stringify(this.nuevaVenta, null, 2));
     this.ventaService.guardar(this.nuevaVenta).subscribe({
-      next: () => {
+      next: (ventaCreada) => {
+        console.log('Mensaje SUNAT:', ventaCreada.mensajeSunat);
+        if (this.nuevaVenta.estadoPago?.toUpperCase() === 'PAGADO') {
+          console.log('Mensaje de pago:', ventaCreada.mensajePago);
+        }
         this.recargar();
         this.cerrarFormulario();
       },

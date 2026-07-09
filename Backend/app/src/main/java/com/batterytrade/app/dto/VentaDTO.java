@@ -30,6 +30,8 @@ public class VentaDTO {
     private String estadoEntrega;
     private String metodoPago;
     private String observacion;
+    private String mensajeSunat;
+    private String mensajePago;
 
     @NotEmpty(message = "Debe agregar al menos un producto")
     @Valid
@@ -116,6 +118,18 @@ public class VentaDTO {
     }
     public void setObservacion(String observacion) {
         this.observacion = observacion;
+    }
+    public String getMensajeSunat() {
+        return mensajeSunat;
+    }
+    public void setMensajeSunat(String mensajeSunat) {
+        this.mensajeSunat = mensajeSunat;
+    }
+    public String getMensajePago() {
+        return mensajePago;
+    }
+    public void setMensajePago(String mensajePago) {
+        this.mensajePago = mensajePago;
     }
     public List<DetalleVentaDTO> getDetalles() {
         return detalles;
